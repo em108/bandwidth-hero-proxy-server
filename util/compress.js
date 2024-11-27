@@ -8,14 +8,12 @@ function compress(input, webp, grayscale, quality, originSize) {
 		.toFormat(format, {
 			quality: quality,
 			progressive: true,
-			optimizeScans: true,
-			chromaSubsampling: '4:4:4',
-			trellisQuantisation: true,
-			overshootDeringing: true,
-			optimiseCoding: true
+			optimizeScans: true
 		})
 		.toBuffer({resolveWithObject: true})
-		.then(({data: output,info}) => {
+		.then(({data: output,info}) => {	// this way we can also get the info about output image, like height, width
+		// .toBuffer()
+		// .then( output => {
 			return {
 				err: null,
 				headers: {
