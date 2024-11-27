@@ -7,7 +7,7 @@ const DEFAULT_QUALITY = 40;
 
 exports.handler = async (event, context) => {
     let { url } = event.queryStringParameters;
-    const { jpeg, bw, l } = event.queryStringParameters;
+    const { jpeg, bw, l, quality: customQuality, format } = event.queryStringParameters;
 
     if (!url) {
         return {
@@ -29,7 +29,7 @@ exports.handler = async (event, context) => {
 
     const webp = !jpeg;
     const grayscale = bw != 0;
-    const quality = parseInt(l, 10) || DEFAULT_QUALITY;
+    const quality = parseInt(l, 10) || customQuality || DEFAULT_QUALITY;
 
     try {
         let response_headers = {};
@@ -56,8 +56,8 @@ exports.handler = async (event, context) => {
 
         const originSize = data.length;
 
-        if (shouldCompress(originType, originSize, webp)) {
-            const { err, output, headers } = await compress(data, webp, grayscale, quality, originSize);   // compress
+        if (shouldCompress(originType, originSize, webp, format)) {
+            const { err, output, headers } = await compress(data, webp, grayscale, quality, originSize, format);   // compress
 
             if (err) {
                 console.log("Conversion failed: ", url);
