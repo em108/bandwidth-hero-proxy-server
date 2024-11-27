@@ -56,38 +56,24 @@ exports.handler = async (event, context) => {
 
         const originSize = data.length;
 
-        if (shouldCompress(originType, originSize, webp, format)) {
-            const { err, output, headers } = await compress(data, webp, grayscale, quality, originSize, format);   // compress
+        const { err, output, headers } = await compress(data, webp, grayscale, quality, originSize, format);   // compress
 
-            if (err) {
-                console.log("Conversion failed: ", url);
-                throw err;
-            }
+        if (err) {
+            console.log("Conversion failed: ", url);
+            throw err;
+        }
 
-            console.log(`From ${originSize}, Saved: ${(originSize - output.length)/originSize}%`);
-            const encoded_output = output.toString('base64');
-            return {
-                statusCode: 200,
-                body: encoded_output,
-                isBase64Encoded: true,  // note: The final size we receive is `originSize` only, maybe it is decoding it server side, because at client side i do get the decoded image directly
-                // "content-length": encoded_output.length,     // this doesn't have any effect, this header contains the actual data size, (decrypted binary data size, not the base64 version)
-                headers: {
-                    "content-encoding": "identity",
-                    ...response_headers,
-                    ...headers
-                }
-            }
-        } else {
-            console.log("Bypassing... Size: " , data.length);
-            return {    // bypass
-                statusCode: 200,
-                body: data.toString('base64'),
-                isBase64Encoded: true,
-                headers: {
-                    "content-encoding": "identity",
-                    // "x-proxy-bypass": '1',
-                    ...response_headers,
-                }
+        console.log(`From ${originSize}, Saved: ${(originSize - output.length)/originSize}%`);
+        const encoded_output = output.toString('base64');
+        return {
+            statusCode: 200,
+            body: encoded_output,
+            isBase64Encoded: true,  // note: The final size we receive is `originSize` only, maybe it is decoding it server side, because at client side i do get the decoded image directly
+            // "content-length": encoded_output.length,     // this doesn't have any effect, this header contains the actual data size, (decrypted binary data size, not the base64 version)
+            headers: {
+                "content-encoding": "identity",
+                ...response_headers,
+                ...headers
             }
         }
     } catch (err) {
