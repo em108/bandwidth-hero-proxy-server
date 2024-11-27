@@ -7,7 +7,7 @@ const DEFAULT_QUALITY = 40;
 
 exports.handler = async (event, context) => {
     let { url } = event.queryStringParameters;
-    const { jpeg, bw, l } = event.queryStringParameters;
+    const { jpeg, bw, l, modern } = event.queryStringParameters;
 
     if (!url) {
         return {
@@ -56,8 +56,8 @@ exports.handler = async (event, context) => {
 
         const originSize = data.length;
 
-        if (shouldCompress(originType, originSize, webp)) {
-            const { err, output, headers } = await compress(data, webp, grayscale, quality, originSize);   // compress
+        if (shouldCompress(originType, originSize, webp, modern)) {
+            const { err, output, headers } = await compress(data, webp, grayscale, quality, originSize, modern);   // compress
 
             if (err) {
                 console.log("Conversion failed: ", url);
